@@ -27,7 +27,6 @@ package com.rylinaux.plugman.command;
  */
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
 import com.rylinaux.plugman.util.StringUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -100,7 +99,7 @@ public class LoadCommand extends AbstractCommand {
             args[i] = args[i].replaceAll("[/\\\\]", "");
         }
 
-        Plugin potential = PluginUtil.getPluginByName(args, 1);
+        Plugin potential = PlugMan.getInstance().getPluginUtil().getPluginByName(args, 1);
 
         if (potential != null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("load.already-loaded", potential.getName()));
@@ -109,12 +108,12 @@ public class LoadCommand extends AbstractCommand {
 
         String name = StringUtil.consolidateStrings(args, 1);
 
-        if (PluginUtil.isIgnored(name)) {
+        if (PlugMan.getInstance().getPluginUtil().isIgnored(name)) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.ignored"));
             return;
         }
 
-        sender.sendMessage(PluginUtil.load(name));
+        sender.sendMessage(PlugMan.getInstance().getPluginUtil().load(name));
 
     }
 }

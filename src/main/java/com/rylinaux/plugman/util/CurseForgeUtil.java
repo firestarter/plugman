@@ -3,6 +3,7 @@ package com.rylinaux.plugman.util;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+import com.rylinaux.plugman.PlugMan;
 import com.rylinaux.plugman.pojo.UpdateResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -93,7 +94,7 @@ public class CurseForgeUtil {
 
         JSONObject latest = (JSONObject) versions.get(versions.size() - 1);
 
-        String currentVersion = PluginUtil.getPluginVersion(pluginName);
+        String currentVersion = PlugMan.getInstance().getPluginUtil().getPluginVersion(pluginName);
         if (!(Bukkit.getPluginManager().getPlugin(pluginName) instanceof JavaPlugin)) {
             if (idSpecified) {
                 return new UpdateResult(UpdateResult.ResultType.INVALID_PLUGIN, currentVersion);

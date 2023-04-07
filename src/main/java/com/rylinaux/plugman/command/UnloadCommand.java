@@ -27,8 +27,6 @@ package com.rylinaux.plugman.command;
  */
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -96,7 +94,7 @@ public class UnloadCommand extends AbstractCommand {
             return;
         }
 
-        Plugin target = PluginUtil.getPluginByName(args, 1);
+        Plugin target = PlugMan.getInstance().getPluginUtil().getPluginByName(args, 1);
 
         if (target == null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.invalid-plugin"));
@@ -104,12 +102,12 @@ public class UnloadCommand extends AbstractCommand {
             return;
         }
 
-        if (PluginUtil.isIgnored(target)) {
+        if (PlugMan.getInstance().getPluginUtil().isIgnored(target)) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.ignored"));
             return;
         }
 
-        sender.sendMessage(PluginUtil.unload(target));
+        sender.sendMessage(PlugMan.getInstance().getPluginUtil().unload(target));
 
     }
 }

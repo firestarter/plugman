@@ -26,6 +26,7 @@ package com.rylinaux.plugman.util;
  * #L%
  */
 
+import com.rylinaux.plugman.PlugMan;
 import com.rylinaux.plugman.pojo.UpdateResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -118,7 +119,7 @@ public class SpiGetUtil {
 
         JSONObject latest = (JSONObject) versions.get(0);
 
-        String currentVersion = PluginUtil.getPluginVersion(pluginName);
+        String currentVersion = PlugMan.getInstance().getPluginUtil().getPluginVersion(pluginName);
         String latestVersion = (String) latest.get("name");
 
         if (currentVersion == null) {

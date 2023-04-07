@@ -28,18 +28,15 @@ package com.rylinaux.plugman.command;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-
 import com.rylinaux.plugman.PlugMan;
 import com.rylinaux.plugman.util.FlagUtil;
-import com.rylinaux.plugman.util.PluginUtil;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Command that lists plugins.
@@ -103,7 +100,7 @@ public class ListCommand extends AbstractCommand {
         List<String> pluginList = Lists.newArrayList();
 
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            pluginList.add(PluginUtil.getFormattedName(plugin, includeVersions));
+            pluginList.add(PlugMan.getInstance().getPluginUtil().getFormattedName(plugin, includeVersions));
         }
 
         Collections.sort(pluginList, String.CASE_INSENSITIVE_ORDER);

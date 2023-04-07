@@ -27,10 +27,7 @@ package com.rylinaux.plugman.command;
  */
 
 import com.google.common.base.Joiner;
-
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -101,7 +98,7 @@ public class InfoCommand extends AbstractCommand {
             return;
         }
 
-        Plugin target = PluginUtil.getPluginByName(args, 1);
+        Plugin target = PlugMan.getInstance().getPluginUtil().getPluginByName(args, 1);
 
         if (target == null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.invalid-plugin"));

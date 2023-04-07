@@ -28,16 +28,14 @@ package com.rylinaux.plugman.command;
 
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
-
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 
 /**
  * Command that dumps plugin names and versions to file.
@@ -100,7 +98,7 @@ public class DumpCommand extends AbstractCommand {
 
         PrintWriter writer = null;
 
-        List<String> plugins = PluginUtil.getPluginNames(true);
+        List<String> plugins = PlugMan.getInstance().getPluginUtil().getPluginNames(true);
         Collections.sort(plugins, String.CASE_INSENSITIVE_ORDER);
 
         try {

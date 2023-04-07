@@ -27,8 +27,6 @@ package com.rylinaux.plugman.command;
  */
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -98,7 +96,7 @@ public class DisableCommand extends AbstractCommand {
 
         if (args[1].equalsIgnoreCase("all") || args[1].equalsIgnoreCase("*")) {
             if (hasPermission("all")) {
-                PluginUtil.disableAll();
+                PlugMan.getInstance().getPluginUtil().disableAll();
                 sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("disable.all"));
             } else {
                 sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.no-permission"));
@@ -106,7 +104,7 @@ public class DisableCommand extends AbstractCommand {
             return;
         }
 
-        Plugin target = PluginUtil.getPluginByName(args, 1);
+        Plugin target = PlugMan.getInstance().getPluginUtil().getPluginByName(args, 1);
 
         if (target == null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.invalid-plugin"));
@@ -114,7 +112,7 @@ public class DisableCommand extends AbstractCommand {
             return;
         }
 
-        if (PluginUtil.isIgnored(target)) {
+        if (PlugMan.getInstance().getPluginUtil().isIgnored(target)) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.ignored"));
             return;
         }
@@ -124,7 +122,7 @@ public class DisableCommand extends AbstractCommand {
             return;
         }
 
-        PluginUtil.disable(target);
+        PlugMan.getInstance().getPluginUtil().disable(target);
 
         sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("disable.disabled", target.getName()));
 

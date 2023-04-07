@@ -27,8 +27,6 @@ package com.rylinaux.plugman.command;
  */
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -98,7 +96,7 @@ public class EnableCommand extends AbstractCommand {
 
         if (args[1].equalsIgnoreCase("all") || args[1].equalsIgnoreCase("*")) {
             if (hasPermission("all")) {
-                PluginUtil.enableAll();
+                PlugMan.getInstance().getPluginUtil().enableAll();
                 sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("enable.all"));
             } else {
                 sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.no-permission"));
@@ -106,7 +104,7 @@ public class EnableCommand extends AbstractCommand {
             return;
         }
 
-        Plugin target = PluginUtil.getPluginByName(args, 1);
+        Plugin target = PlugMan.getInstance().getPluginUtil().getPluginByName(args, 1);
 
         if (target == null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.invalid-plugin"));
@@ -114,7 +112,7 @@ public class EnableCommand extends AbstractCommand {
             return;
         }
 
-        if (PluginUtil.isIgnored(target)) {
+        if (PlugMan.getInstance().getPluginUtil().isIgnored(target)) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.ignored"));
             return;
         }
@@ -124,7 +122,7 @@ public class EnableCommand extends AbstractCommand {
             return;
         }
 
-        PluginUtil.enable(target);
+        PlugMan.getInstance().getPluginUtil().enable(target);
 
         sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("enable.enabled", target.getName()));
 

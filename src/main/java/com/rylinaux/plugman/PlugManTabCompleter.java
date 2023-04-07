@@ -26,7 +26,6 @@ package com.rylinaux.plugman;
  * #L%
  */
 
-import com.rylinaux.plugman.util.PluginUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,7 +38,10 @@ import org.bukkit.util.StringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -119,20 +121,20 @@ public class PlugManTabCompleter implements TabCompleter {
                 StringUtil.copyPartialMatches(partialPlugin, files, completions);
             } else if (args[0].equalsIgnoreCase("lookup")) {
                 String partialCommand = args[1];
-                List<String> commands = PluginUtil.getKnownCommands().keySet().stream().filter(s -> !s.toLowerCase().contains(":")).collect(Collectors.toList());
+                List<String> commands = PlugMan.getInstance().getPluginUtil().getKnownCommands().keySet().stream().filter(s -> !s.toLowerCase().contains(":")).collect(Collectors.toList());
                 commands.remove("/");
                 StringUtil.copyPartialMatches(partialCommand, commands, completions);
             } else if (args[0].equalsIgnoreCase("enable")) {
                 String partialPlugin = args[1];
-                List<String> plugins = PluginUtil.getDisabledPluginNames(false);
+                List<String> plugins = PlugMan.getInstance().getPluginUtil().getDisabledPluginNames(false);
                 StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
             } else if (args[0].equalsIgnoreCase("disable")) {
                 String partialPlugin = args[1];
-                List<String> plugins = PluginUtil.getEnabledPluginNames(false);
+                List<String> plugins = PlugMan.getInstance().getPluginUtil().getEnabledPluginNames(false);
                 StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
             } else {
                 String partialPlugin = args[1];
-                List<String> plugins = PluginUtil.getPluginNames(false);
+                List<String> plugins = PlugMan.getInstance().getPluginUtil().getPluginNames(false);
                 StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
             }
 

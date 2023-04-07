@@ -4,6 +4,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -147,6 +148,10 @@ public class BukkitCommandWrap {
         if (this.syncCommandsMethod == null) try {
             this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.nmsVersion + ".CraftServer").getDeclaredMethod("syncCommands");
             this.syncCommandsMethod.setAccessible(true);
+
+            if (Bukkit.getOnlinePlayers().size() >= 1)
+                for (Player player : Bukkit.getOnlinePlayers())
+                    player.updateCommands();
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
             return;

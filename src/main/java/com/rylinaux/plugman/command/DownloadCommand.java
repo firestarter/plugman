@@ -1,7 +1,6 @@
 package com.rylinaux.plugman.command;
 
 import com.rylinaux.plugman.PlugMan;
-import com.rylinaux.plugman.util.PluginUtil;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -131,7 +130,7 @@ public class DownloadCommand extends AbstractCommand {
 
         File file;
         try {
-            file = PluginUtil.download(url);
+            file = PlugMan.getInstance().getPluginUtil().download(url);
         } catch (IOException e) {
             e.printStackTrace();
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("download.download-failed"));
@@ -140,7 +139,7 @@ public class DownloadCommand extends AbstractCommand {
 
         String name = file.getName();
         name = name.substring(0, name.length() - 4);
-        sender.sendMessage(PluginUtil.load(name));
+        sender.sendMessage(PlugMan.getInstance().getPluginUtil().load(name));
     }
 
 }
