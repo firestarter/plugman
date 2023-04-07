@@ -62,6 +62,7 @@ import java.util.zip.ZipFile;
  * @author rylinaux
  */
 public class BukkitPluginUtil implements PluginUtil {
+    //TODO: Clean this class up, I don't like how it currently looks
 
     private final Class<?> pluginClassLoader;
     private final Field pluginClassLoaderPlugin;
@@ -314,21 +315,20 @@ public class BukkitPluginUtil implements PluginUtil {
     public List<String> findByCommand(String command) {
         List<String> plugins = new ArrayList<>();
 
-        List<String> pls = new ArrayList<>();
         for (Map.Entry<String, Command> s : this.getKnownCommands().entrySet()) {
             ClassLoader cl = s.getValue().getClass().getClassLoader();
             if (cl.getClass() != this.pluginClassLoader) {
                 String[] parts = s.getKey().split(":");
                 if (parts.length == 2 && parts[1].equalsIgnoreCase(command)) {
                     Plugin plugin = Bukkit.getPluginManager().getPlugin(parts[0]);
-                    if (plugin != null) pls.add(plugin.getName());
+                    if (plugin != null) plugins.add(plugin.getName());
                 }
                 continue;
             }
 
             try {
                 JavaPlugin plugin = (JavaPlugin) this.pluginClassLoaderPlugin.get(cl);
-                pls.add(plugin.getName());
+                plugins.add(plugin.getName());
             } catch (IllegalAccessException ignored) {
             }
         }
@@ -415,32 +415,7 @@ public class BukkitPluginUtil implements PluginUtil {
         if (!(PlugMan.getInstance().getBukkitCommandWrap() instanceof BukkitCommandWrap_Useless)) {
             Plugin finalTarget = target;
             Bukkit.getScheduler().runTaskLater(PlugMan.getInstance(), () -> {
-                Map<String, Command> knownCommands = this.getKnownCommands();
-                List<Map.Entry<String, Command>> commands = knownCommands.entrySet().stream()
-                        .filter(s -> {
-                            if (s.getKey().contains(":"))
-                                return s.getKey().split(":")[0].equalsIgnoreCase(finalTarget.getName());
-                            else {
-                                ClassLoader cl = s.getValue().getClass().getClassLoader();
-                                try {
-                                    return cl.getClass() == this.pluginClassLoader && this.pluginClassLoaderPlugin.get(cl) == finalTarget;
-                                } catch (IllegalAccessException e) {
-                                    return false;
-                                }
-                            }
-                        })
-                        .collect(Collectors.toList());
-
-                for (Map.Entry<String, Command> entry : commands) {
-                    String alias = entry.getKey();
-                    Command command = entry.getValue();
-                    PlugMan.getInstance().getBukkitCommandWrap().wrap(command, alias);
-                }
-
-                PlugMan.getInstance().getBukkitCommandWrap().sync();
-
-                if (Bukkit.getOnlinePlayers().size() >= 1)
-                    for (Player player : Bukkit.getOnlinePlayers()) player.updateCommands();
+                this.loadCommands(finalTarget);
             }, 10L);
 
             PlugMan.getInstance().getFilePluginMap().put(pluginFile.getName(), target.getName());
@@ -532,51 +507,8 @@ public class BukkitPluginUtil implements PluginUtil {
         String name = plugin.getName();
 
         if (!PlugManAPI.getGentleUnloads().containsKey(plugin)) {
-            if (!(PlugMan.getInstance().getBukkitCommandWrap() instanceof BukkitCommandWrap_Useless)) {
-                Map<String, Command> knownCommands = this.getKnownCommands();
-                List<Map.Entry<String, Command>> commands = knownCommands.entrySet().stream()
-                        .filter(s -> {
-                            if (s.getKey().contains(":"))
-                                return s.getKey().split(":")[0].equalsIgnoreCase(plugin.getName());
-                            else {
-                                ClassLoader cl = s.getValue().getClass().getClassLoader();
-                                try {
-                                    return cl.getClass() == this.pluginClassLoader && this.pluginClassLoaderPlugin.get(cl) == plugin;
-                                } catch (IllegalAccessException e) {
-                                    return false;
-                                }
-                            }
-                        })
-                        .collect(Collectors.toList());
-
-                for (Map.Entry<String, Command> entry : commands) {
-                    String alias = entry.getKey();
-                    PlugMan.getInstance().getBukkitCommandWrap().unwrap(alias);
-                }
-
-                for (Map.Entry<String, Command> entry : knownCommands.entrySet().stream().filter(stringCommandEntry -> Plugin.class.isAssignableFrom(stringCommandEntry.getValue().getClass())).filter(stringCommandEntry -> {
-                    Field pluginField = Arrays.stream(stringCommandEntry.getValue().getClass().getDeclaredFields()).filter(field -> Plugin.class.isAssignableFrom(field.getType())).findFirst().orElse(null);
-                    if (pluginField != null) {
-                        Plugin owningPlugin;
-                        try {
-                            owningPlugin = (Plugin) pluginField.get(stringCommandEntry.getValue());
-                            return owningPlugin.getName().equalsIgnoreCase(plugin.getName());
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    return false;
-                }).collect(Collectors.toList())) {
-                    String alias = entry.getKey();
-                    PlugMan.getInstance().getBukkitCommandWrap().unwrap(alias);
-                }
-
-                PlugMan.getInstance().getBukkitCommandWrap().sync();
-
-                if (Bukkit.getOnlinePlayers().size() >= 1)
-                    for (Player player : Bukkit.getOnlinePlayers()) player.updateCommands();
-            }
+            if (!(PlugMan.getInstance().getBukkitCommandWrap() instanceof BukkitCommandWrap_Useless))
+                this.unloadCommands(plugin);
 
             PluginManager pluginManager = Bukkit.getPluginManager();
 
@@ -710,5 +642,81 @@ public class BukkitPluginUtil implements PluginUtil {
 
         return PlugMan.getInstance().getMessageFormatter().format("unload.unloaded", name);
 
+    }
+
+    protected void loadCommands(Plugin plugin) {
+        Map<String, Command> knownCommands = this.getKnownCommands();
+        List<Map.Entry<String, Command>> commands = knownCommands.entrySet().stream()
+                .filter(s -> {
+                    if (s.getKey().contains(":"))
+                        return s.getKey().split(":")[0].equalsIgnoreCase(plugin.getName());
+                    else {
+                        ClassLoader cl = s.getValue().getClass().getClassLoader();
+                        try {
+                            return cl.getClass() == this.pluginClassLoader && this.pluginClassLoaderPlugin.get(cl) == plugin;
+                        } catch (IllegalAccessException e) {
+                            return false;
+                        }
+                    }
+                })
+                .collect(Collectors.toList());
+
+        for (Map.Entry<String, Command> entry : commands) {
+            String alias = entry.getKey();
+            Command command = entry.getValue();
+            PlugMan.getInstance().getBukkitCommandWrap().wrap(command, alias);
+        }
+
+        PlugMan.getInstance().getBukkitCommandWrap().sync();
+
+        if (Bukkit.getOnlinePlayers().size() >= 1)
+            for (Player player : Bukkit.getOnlinePlayers())
+                player.updateCommands();
+    }
+
+    protected void unloadCommands(Plugin plugin) {
+        Map<String, Command> knownCommands = this.getKnownCommands();
+        List<Map.Entry<String, Command>> commands = knownCommands.entrySet().stream()
+                .filter(s -> {
+                    if (s.getKey().contains(":"))
+                        return s.getKey().split(":")[0].equalsIgnoreCase(plugin.getName());
+                    else {
+                        ClassLoader cl = s.getValue().getClass().getClassLoader();
+                        try {
+                            return cl.getClass() == this.pluginClassLoader && this.pluginClassLoaderPlugin.get(cl) == plugin;
+                        } catch (IllegalAccessException e) {
+                            return false;
+                        }
+                    }
+                })
+                .collect(Collectors.toList());
+
+        for (Map.Entry<String, Command> entry : commands) {
+            String alias = entry.getKey();
+            PlugMan.getInstance().getBukkitCommandWrap().unwrap(alias);
+        }
+
+        for (Map.Entry<String, Command> entry : knownCommands.entrySet().stream().filter(stringCommandEntry -> Plugin.class.isAssignableFrom(stringCommandEntry.getValue().getClass())).filter(stringCommandEntry -> {
+            Field pluginField = Arrays.stream(stringCommandEntry.getValue().getClass().getDeclaredFields()).filter(field -> Plugin.class.isAssignableFrom(field.getType())).findFirst().orElse(null);
+            if (pluginField != null) {
+                Plugin owningPlugin;
+                try {
+                    owningPlugin = (Plugin) pluginField.get(stringCommandEntry.getValue());
+                    return owningPlugin.getName().equalsIgnoreCase(plugin.getName());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return false;
+        }).collect(Collectors.toList())) {
+            String alias = entry.getKey();
+            PlugMan.getInstance().getBukkitCommandWrap().unwrap(alias);
+        }
+
+        PlugMan.getInstance().getBukkitCommandWrap().sync();
+
+        if (Bukkit.getOnlinePlayers().size() >= 1)
+            for (Player player : Bukkit.getOnlinePlayers()) player.updateCommands();
     }
 }

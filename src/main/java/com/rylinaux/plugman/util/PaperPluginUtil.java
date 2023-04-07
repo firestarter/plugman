@@ -380,7 +380,7 @@ public class PaperPluginUtil implements PluginUtil {
         if (!(PlugMan.getInstance().getBukkitCommandWrap() instanceof BukkitCommandWrap_Useless)) {
             Plugin finalTarget = target;
             Bukkit.getScheduler().runTaskLater(PlugMan.getInstance(), () -> {
-                this.updateCommands(finalTarget);
+                this.loadCommands(finalTarget);
             }, 10L);
 
             PlugMan.getInstance().getFilePluginMap().put(pluginFile.getName(), target.getName());
@@ -389,8 +389,12 @@ public class PaperPluginUtil implements PluginUtil {
         return PlugMan.getInstance().getMessageFormatter().format("load.loaded", target.getName());
     }
 
-    private void updateCommands(Plugin target) {
-        this.bukkitPluginUtil.updateCommands(target);
+    private void loadCommands(Plugin target) {
+        this.bukkitPluginUtil.loadCommands(target);
+    }
+
+    private void unloadCommands(Plugin target) {
+        this.bukkitPluginUtil.loadCommands(target);
     }
 
     @Override
@@ -476,7 +480,7 @@ public class PaperPluginUtil implements PluginUtil {
 
         if (!PlugManAPI.getGentleUnloads().containsKey(plugin)) {
             if (!(PlugMan.getInstance().getBukkitCommandWrap() instanceof BukkitCommandWrap_Useless))
-                this.updateCommands(plugin);
+                this.unloadCommands(plugin);
 
             PluginManager pluginManager = Bukkit.getPluginManager();
 
