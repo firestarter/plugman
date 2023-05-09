@@ -36,6 +36,7 @@ error:
   no-permission: '&cYou do not have permission to do this.'
   specify-plugin: '&cYou must specify a plugin.'
   specify-command: '&cYou must specify a command.'
+  paper-plugin: "&cPaper plugins are currently not supported, I'm sorry."
   usage:
     command: '&7- &9Command: &7{0}'
     description: '&7- &9Description: &7{0}'
