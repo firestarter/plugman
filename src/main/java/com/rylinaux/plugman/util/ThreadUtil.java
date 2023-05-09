@@ -27,7 +27,6 @@ package com.rylinaux.plugman.util;
  */
 
 import com.rylinaux.plugman.PlugMan;
-
 import org.bukkit.Bukkit;
 
 /**

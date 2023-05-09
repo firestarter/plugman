@@ -141,7 +141,7 @@ public class BukkitPluginUtil implements PluginUtil {
     @Override
     public void enableAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.enable(plugin);
     }
 
@@ -161,7 +161,7 @@ public class BukkitPluginUtil implements PluginUtil {
     @Override
     public void disableAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.disable(plugin);
     }
 
@@ -492,7 +492,7 @@ public class BukkitPluginUtil implements PluginUtil {
     @Override
     public void reloadAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.reload(plugin);
     }
 
@@ -642,6 +642,11 @@ public class BukkitPluginUtil implements PluginUtil {
 
         return PlugMan.getInstance().getMessageFormatter().format("unload.unloaded", name);
 
+    }
+
+    @Override
+    public boolean isPaperPlugin(Plugin plugin) {
+        return false;
     }
 
     protected void loadCommands(Plugin plugin) {
