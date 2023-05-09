@@ -118,6 +118,11 @@ public class RestartCommand extends AbstractCommand {
             return;
         }
 
+        if (PlugMan.getInstance().getPluginUtil().isPaperPlugin(target)) {
+            sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.paper-plugin"));
+            return;
+        }
+
         PlugMan.getInstance().getPluginUtil().disable(target);
         PlugMan.getInstance().getPluginUtil().enable(target);
 

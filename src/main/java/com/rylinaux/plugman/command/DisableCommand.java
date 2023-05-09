@@ -12,10 +12,10 @@ package com.rylinaux.plugman.command;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -83,24 +83,22 @@ public class DisableCommand extends AbstractCommand {
     @Override
     public void execute(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!hasPermission()) {
+        if (!this.hasPermission()) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.no-permission"));
             return;
         }
 
         if (args.length < 2) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.specify-plugin"));
-            sendUsage();
+            this.sendUsage();
             return;
         }
 
         if (args[1].equalsIgnoreCase("all") || args[1].equalsIgnoreCase("*")) {
-            if (hasPermission("all")) {
+            if (this.hasPermission("all")) {
                 PlugMan.getInstance().getPluginUtil().disableAll();
                 sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("disable.all"));
-            } else {
-                sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.no-permission"));
-            }
+            } else sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.no-permission"));
             return;
         }
 
@@ -108,12 +106,17 @@ public class DisableCommand extends AbstractCommand {
 
         if (target == null) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.invalid-plugin"));
-            sendUsage();
+            this.sendUsage();
             return;
         }
 
         if (PlugMan.getInstance().getPluginUtil().isIgnored(target)) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.ignored"));
+            return;
+        }
+
+        if (PlugMan.getInstance().getPluginUtil().isPaperPlugin(target)) {
+            sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.paper-plugin"));
             return;
         }
 

@@ -29,6 +29,7 @@ package com.rylinaux.plugman.util;
 import com.rylinaux.plugman.PlugMan;
 import com.rylinaux.plugman.api.GentleUnload;
 import com.rylinaux.plugman.api.PlugManAPI;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -81,6 +82,57 @@ public class PaperPluginUtil implements PluginUtil {
         this.bukkitPluginUtil = bukkitPluginUtil;
     }
 
+    //TODO: Make it look better
+    @Override
+    public boolean isPaperPlugin(Plugin plugin) {
+        try {
+            Field instanceField = Class.forName("io.papermc.paper.plugin.entrypoint.LaunchEntryPointHandler").getField("INSTANCE");
+
+            instanceField.setAccessible(true);
+
+            Object instance = instanceField.get(null);
+
+            Method getMethod = Arrays.stream(instance.getClass().getDeclaredMethods())
+                    .filter(method -> method.getName().equals("get"))
+                    .findFirst()
+                    .orElse(null);
+
+            if (getMethod == null)
+                return false;
+
+            Field pluginField = Class.forName("io.papermc.paper.plugin.entrypoint.Entrypoint").getDeclaredField("PLUGIN");
+
+            Object providerStorage = getMethod.invoke(instance, pluginField.get(null));
+
+            if (providerStorage == null)
+                return false;
+
+            Method getRegisteredProvidersMethod = providerStorage.getClass().getMethod("getRegisteredProviders");
+
+
+            List providers = (List) getRegisteredProvidersMethod.invoke(providerStorage);
+
+            for (Object provider : providers)
+                try {
+                    Method getMetaMethod = provider.getClass().getMethod("getMeta");
+
+                    PluginMeta configuration = (PluginMeta) getMetaMethod.invoke(provider);
+
+                    if (!configuration.getName().equalsIgnoreCase(plugin.getName()))
+                        continue;
+
+                    return Class.forName("io.papermc.paper.plugin.provider.type.paper.PaperPluginParent$PaperServerPluginProvider").isAssignableFrom(provider.getClass());
+                } catch (Throwable ignored) {
+                    return false;
+                }
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        return false;
+    }
+
     /**
      * Download a plugin from a URL.
      *
@@ -111,7 +163,7 @@ public class PaperPluginUtil implements PluginUtil {
     @Override
     public void enableAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.enable(plugin);
     }
 
@@ -133,7 +185,7 @@ public class PaperPluginUtil implements PluginUtil {
     @Override
     public void disableAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.disable(plugin);
     }
 
@@ -464,7 +516,7 @@ public class PaperPluginUtil implements PluginUtil {
     @Override
     public void reloadAll() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-            if (!this.isIgnored(plugin))
+            if (!this.isIgnored(plugin) && !this.isPaperPlugin(plugin))
                 this.reload(plugin);
     }
 

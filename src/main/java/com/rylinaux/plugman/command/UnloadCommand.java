@@ -107,6 +107,11 @@ public class UnloadCommand extends AbstractCommand {
             return;
         }
 
+        if (PlugMan.getInstance().getPluginUtil().isPaperPlugin(target)) {
+            sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.paper-plugin"));
+            return;
+        }
+
         sender.sendMessage(PlugMan.getInstance().getPluginUtil().unload(target));
 
     }

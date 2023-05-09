@@ -117,6 +117,11 @@ public class EnableCommand extends AbstractCommand {
             return;
         }
 
+        if (PlugMan.getInstance().getPluginUtil().isPaperPlugin(target)) {
+            sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("error.paper-plugin"));
+            return;
+        }
+
         if (target.isEnabled()) {
             sender.sendMessage(PlugMan.getInstance().getMessageFormatter().format("enable.already-enabled", target.getName()));
             return;
