@@ -169,4 +169,11 @@ public interface PluginUtil {
      * @return the message to send to the user.
      */
     public String unload(Plugin plugin);
+
+    /**
+     * Returns if the plugin is a Paper plugin.
+     * @param plugin the plugin to check
+     * @return if the plugin is a Paper plugin
+     */
+    public boolean isPaperPlugin(Plugin plugin);
 }

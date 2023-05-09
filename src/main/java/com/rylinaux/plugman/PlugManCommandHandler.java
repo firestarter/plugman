@@ -27,7 +27,6 @@ package com.rylinaux.plugman;
  */
 
 import com.rylinaux.plugman.command.*;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

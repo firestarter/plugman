@@ -217,7 +217,7 @@ public class PlugMan extends JavaPlugin {
             this.pluginUtil = new BukkitPluginUtil();
         }
 
-        if (pluginUtil instanceof PaperPluginUtil) {
+        if (this.pluginUtil instanceof PaperPluginUtil) {
             Bukkit.getLogger().warning("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Bukkit.getLogger().warning("It seems like you're running on paper.");
             Bukkit.getLogger().warning("This may cause issues.");
@@ -231,6 +231,15 @@ public class PlugMan extends JavaPlugin {
         File messagesFile = new File("plugins" + File.separator + "PlugManX", "messages.yml");
 
         if (!messagesFile.exists()) this.saveResource("messages.yml", true);
+
+        FileConfiguration messageConfiguration = YamlConfiguration.loadConfiguration(messagesFile);
+
+        if (!messageConfiguration.isSet("error.paper-plugin")) try {
+            messageConfiguration.set("error.paper-plugin", "&cPaper plugins are currently not supported, I'm sorry.");
+            messageConfiguration.save(messagesFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         this.messageFormatter = new MessageFormatter();
 
