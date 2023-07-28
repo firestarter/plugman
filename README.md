@@ -80,7 +80,7 @@ How to include PlugMan with Maven:
         <dependency>
             <groupId>com.rylinaux</groupId>
             <artifactId>PlugMan</artifactId>
-            <version>2.2.9</version>
+            <version>2.3.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -94,6 +94,6 @@ repositories {
     }
 }
 dependencies {
-    compileOnly 'com.rylinaux:PlugMan:2.2.9'
+    compileOnly 'com.rylinaux:PlugMan:2.3.3'
 }
 ```
