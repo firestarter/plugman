@@ -86,6 +86,7 @@ public class PlugMan extends JavaPlugin {
     private final HashMap<String, String> filePluginMap = new HashMap<>();
     private PluginUtil pluginUtil;
     private boolean notifyOnBrokenCommandRemoval;
+    private boolean disableDownloadCommand;
     private Field lookupNamesField = null;
     /**
      * The command manager which adds all command we want so 1.13+ players can instantly tab-complete them
@@ -166,6 +167,13 @@ public class PlugMan extends JavaPlugin {
     }
 
     /**
+     * @return = If PlugManX should disable the download command
+     */
+    public boolean isDisableDownloadCommand() {
+        return disableDownloadCommand;
+    }
+
+    /**
      * For older server versions: Adds "PlugManX" as "PlugMan" to "lookupNames" field of "SimplePluginManager"
      * This is needed because of plugins which depend on "PlugMan", but server has "PlugManX" installed
      * Not needed on newer versions, because of new "provides" keyword in plugin.yml
@@ -231,6 +239,10 @@ public class PlugMan extends JavaPlugin {
         File messagesFile = new File("plugins" + File.separator + "PlugManX", "messages.yml");
 
         if (!messagesFile.exists()) this.saveResource("messages.yml", true);
+
+        File jpMessagesFile = new File("plugins" + File.separator + "PlugManX", "messages_jp.yml");
+
+        if (!jpMessagesFile.exists()) this.saveResource("messages_jp.yml", true);
 
         FileConfiguration messageConfiguration = YamlConfiguration.loadConfiguration(messagesFile);
 
@@ -302,6 +314,8 @@ public class PlugMan extends JavaPlugin {
         }
 
         this.notifyOnBrokenCommandRemoval = this.getConfig().getBoolean("notify-on-broken-command-removal", true);
+
+        this.disableDownloadCommand = this.getConfig().getBoolean("disable-download-command", false);
 
         boolean alerted = false;
 
