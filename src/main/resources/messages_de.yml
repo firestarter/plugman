@@ -1,9 +1,9 @@
 ###
-# Custom Messaging File.
+# Eigene Nachrichten-Datei.
 #
-# Messaging can include any of the formatting codes found on http://minecraft.gamepedia.com/Formatting_codes and must use the '&' character to denote them.
-# Make sure to include the single quotes around the custom messages.
-# With new updates, this is subject to change and previous versions might not display information properly. Changes will be noted in the changelog.
+# Nachrichten können Formatierungscodes enthalten, die auf http://minecraft.gamepedia.com/Formatting_codes gefunden werden können, und müssen das '&' Zeichen verwenden, um sie zu kennzeichnen.
+# Stelle sicher, dass du die einfachen Anführungszeichen um die Nachrichten setzt.
+# Bei neuen Updates kann sich dies ändern, und frühere Versionen zeigen die Informationen möglicherweise nicht richtig an. Änderungen werden im Changelog vermerkt.
 ###
 
 prefix: '&7[&aPlugMan&7] '
