@@ -229,20 +229,22 @@ public class PlugMan extends JavaPlugin {
             Bukkit.getLogger().warning("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Bukkit.getLogger().warning("It seems like you're running on paper.");
             Bukkit.getLogger().warning("This may cause issues.");
-            Bukkit.getLogger().warning("If you encounter any issues, please join my dicord: https://discord.gg/dBhfCzdZxq");
+            Bukkit.getLogger().warning("If you encounter any issues, please join my discord: https://discord.gg/dBhfCzdZxq");
             Bukkit.getLogger().warning("Or create an issue on GitHub: https://github.com/TheBlackEntity/PlugMan");
             Bukkit.getLogger().warning("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
 
         PlugMan.instance = this;
 
-        File messagesFile = new File("plugins" + File.separator + "PlugManX", "messages.yml");
+        File messagesFile = new File(getDataFolder(), "messages.yml");
+        if (!messagesFile.exists())
+            saveResource("messages.yml", true);
 
-        if (!messagesFile.exists()) this.saveResource("messages.yml", true);
+        if (!new File(getDataFolder(), "messages_jp.yml").exists())
+            saveResource("messages_jp.yml", true);
 
-        File jpMessagesFile = new File("plugins" + File.separator + "PlugManX", "messages_jp.yml");
-
-        if (!jpMessagesFile.exists()) this.saveResource("messages_jp.yml", true);
+        if (!new File(getDataFolder(), "messages_de.yml").exists())
+            saveResource("messages_de.yml", true);
 
         FileConfiguration messageConfiguration = YamlConfiguration.loadConfiguration(messagesFile);
 
