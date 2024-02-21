@@ -246,6 +246,9 @@ public class PlugMan extends JavaPlugin {
         if (!new File(getDataFolder(), "messages_de.yml").exists())
             saveResource("messages_de.yml", true);
 
+        if (!new File(getDataFolder(), "messages_es.yml").exists())
+            saveResource("messages_es.yml", true);
+
         FileConfiguration messageConfiguration = YamlConfiguration.loadConfiguration(messagesFile);
 
         if (!messageConfiguration.isSet("error.paper-plugin")) try {
