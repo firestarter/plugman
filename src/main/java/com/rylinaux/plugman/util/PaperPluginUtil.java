@@ -67,7 +67,6 @@ public class PaperPluginUtil implements PluginUtil {
     private final BukkitPluginUtil bukkitPluginUtil;
     private Field commandMapField;
     private Field knownCommandsField;
-    private String nmsVersion = null;
 
     {
         try {
@@ -469,7 +468,7 @@ public class PaperPluginUtil implements PluginUtil {
     @Override
     public Map<String, Command> getKnownCommands() {
         if (this.commandMapField == null) try {
-            this.commandMapField = Class.forName("org.bukkit.craftbukkit." + this.getNmsVersion() + ".CraftServer").getDeclaredField("commandMap");
+            this.commandMapField = Class.forName("org.bukkit.craftbukkit.CraftServer").getDeclaredField("commandMap");
             this.commandMapField.setAccessible(true);
         } catch (NoSuchFieldException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -502,17 +501,6 @@ public class PaperPluginUtil implements PluginUtil {
 
         return knownCommands;
     }
-
-    private String getNmsVersion() {
-        if (this.nmsVersion == null) try {
-            this.nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            this.nmsVersion = null;
-        }
-        return this.nmsVersion;
-    }
-
 
     /**
      * Reload a plugin.
